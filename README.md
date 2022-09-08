@@ -19,7 +19,7 @@ This method will output the probability of a single specified image containing a
 
 This method will output the probabilities of an image containing a rat for all photos contained inside a folder path.
 
-`--save_results` can be added to save the output to a csv file.
+`--save_results` can be added to save the output to a csv file. Add a suffix to the output file ['_rat', '_empty']
 
 **3) Re-fit the model:**
     
@@ -36,7 +36,7 @@ The filepath must point to a folder structure like the following:
 │   │   img02.png
 │   │   ...
 |
-└───folder2
+└───empty
     │   img11.png
     │   img12.png
     │   ...
