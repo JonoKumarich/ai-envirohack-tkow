@@ -4,7 +4,7 @@ import tensorflow as tf
 from typing import Dict
 import os
 import csv
-import tqdm
+from tqdm import tqdm
 
 WIDTH, HEIGHT = (256, 256)
 BATCH_SIZE = 128
