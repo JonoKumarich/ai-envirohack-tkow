@@ -23,7 +23,7 @@ def predict_image(image_path: str, suppress_output: bool = False) -> float:
     input_arr = tf.expand_dims(input_arr, 0)
     input_arr = tf.image.rgb_to_grayscale(input_arr)
 
-    prediction = model.predict(input_arr)[0][1]
+    prediction = model.predict(input_arr, verbose=0)[0][1]
 
     if not suppress_output:
         print(f"""
@@ -37,7 +37,7 @@ File at path: {image_path} \nRat presence prediction: {prediction:2f}
 def batch_prediction(folder_path: str, save_results: bool = False) -> Dict[str, float]:
     preds = {}
 
-    for file in os.listdir(folder_path):
+    for file in tqdm(os.listdir(folder_path)):
         pred = predict_image(f"{folder_path}/{file}", suppress_output=True)
         preds[file] = pred
 
@@ -47,7 +47,7 @@ def batch_prediction(folder_path: str, save_results: bool = False) -> Dict[str, 
             w.writeheader()
             rows = [{"filename": key,
                      "prediction": preds[key]
-                     } for key in tqdm(preds.keys())]
+                     } for key in preds.keys()]
             w.writerows(rows)
 
     return preds
@@ -63,6 +63,7 @@ def update_model(folder_path: str, overwrite_model: bool = False) -> tf.keras.Mo
         f"{folder_path}/",
         validation_split=0.2,
         subset="training",
+        color_mode="grayscale",
         seed=123,
         image_size=(WIDTH, HEIGHT),
         batch_size=BATCH_SIZE)
@@ -71,6 +72,7 @@ def update_model(folder_path: str, overwrite_model: bool = False) -> tf.keras.Mo
         f"{folder_path}/",
         validation_split=0.2,
         subset="validation",
+        color_mode="grayscale",
         seed=123,
         image_size=(WIDTH, HEIGHT),
         batch_size=BATCH_SIZE)
