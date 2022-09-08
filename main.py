@@ -24,9 +24,10 @@ def predict_image(image_path: str, suppress_output: bool = False) -> float:
 
     prediction = model.predict(input_arr)[0][1]
 
-    print(f"""
+    if not suppress_output:
+        print(f"""
 File at path: {image_path} \nRat presence prediction: {prediction:2f}
-    """)
+        """)
 
     return prediction
 
