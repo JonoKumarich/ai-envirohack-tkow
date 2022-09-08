@@ -7,6 +7,7 @@ import csv
 import tqdm
 
 WIDTH, HEIGHT = (256, 256)
+BATCH_SIZE = 128
 
 app = typer.Typer(no_args_is_help=True)
 
@@ -50,6 +51,40 @@ def batch_prediction(folder_path: str, save_results: bool = False) -> Dict[str, 
             w.writerows(rows)
 
     return preds
+
+
+@app.command(short_help="""
+Updates model with new data. Filepath must contatin two folders of files only:
+  - filepath:
+        /rat
+        /no_rat""")
+def update_model(folder_path: str, overwrite_model: bool = False) -> tf.keras.Model:
+    train_ds = tf.keras.utils.image_dataset_from_directory(
+        f"{folder_path}/",
+        validation_split=0.2,
+        subset="training",
+        seed=123,
+        image_size=(WIDTH, HEIGHT),
+        batch_size=BATCH_SIZE)
+
+    val_ds = tf.keras.utils.image_dataset_from_directory(
+        f"{folder_path}/",
+        validation_split=0.2,
+        subset="validation",
+        seed=123,
+        image_size=(WIDTH, HEIGHT),
+        batch_size=BATCH_SIZE)
+
+    model.fit(
+        train_ds,
+        validation_data=val_ds,
+        epochs=5
+    )
+
+    if overwrite_model:
+        joblib.dump(model, 'model.pkl')
+
+    return model
 
 
 if __name__ == "__main__":
