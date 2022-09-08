@@ -9,6 +9,9 @@ from tqdm import tqdm
 WIDTH, HEIGHT = (256, 256)
 BATCH_SIZE = 128
 
+if not os.path.exists('./output'):
+    os.makedirs('./output')
+
 app = typer.Typer(no_args_is_help=True)
 
 
