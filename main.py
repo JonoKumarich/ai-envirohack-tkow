@@ -4,6 +4,7 @@ import tensorflow as tf
 from typing import Dict
 import os
 import csv
+import tqdm
 
 WIDTH, HEIGHT = (256, 256)
 
@@ -11,7 +12,7 @@ app = typer.Typer(no_args_is_help=True)
 
 
 @app.command(short_help="Predicts probability of rat detected in image at path.")
-def predict_image(image_path: str) -> float:
+def predict_image(image_path: str, suppress_output: bool = False) -> float:
     image = tf.keras.utils.load_img(
         image_path,
         target_size=(WIDTH, HEIGHT)
@@ -35,7 +36,7 @@ def batch_prediction(folder_path: str, save_results: bool = False) -> Dict[str, 
     preds = {}
 
     for file in os.listdir(folder_path):
-        pred = predict_image(f"{folder_path}/{file}")
+        pred = predict_image(f"{folder_path}/{file}", suppress_output=True)
         preds[file] = pred
 
     if save_results:
@@ -44,7 +45,7 @@ def batch_prediction(folder_path: str, save_results: bool = False) -> Dict[str, 
             w.writeheader()
             rows = [{"filename": key,
                      "prediction": preds[key]
-                     } for key in preds.keys()]
+                     } for key in tqdm(preds.keys())]
             w.writerows(rows)
 
     return preds
